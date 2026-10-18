@@ -60,6 +60,15 @@ h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.1rem,6vw,3.4rem);l
 .go::after{content:"\2192";display:inline-block;margin-left:.4em;transition:transform .2s}
 .card:hover .go::after{transform:translateX(3px)}
 
+.today-box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 22px 20px}
+.today-label{font-size:.75rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--mu)}
+.today-stats{display:flex;gap:28px;margin-top:16px;flex-wrap:wrap}
+.today-stat{text-decoration:none;color:inherit}
+.today-num{font-family:var(--serif);font-size:2.4rem;line-height:1;color:var(--ac)}
+.today-unit{margin-top:4px;font-size:.95rem;font-weight:500}
+.today-sub{font-size:.8rem;color:var(--mu)}
+.today-stat:hover .today-unit{color:var(--ac)}
+
 .foot{margin-top:56px;padding-top:22px;padding-bottom:44px;border-top:1px solid var(--line);color:var(--mu);font-size:.875rem}
 .foot p{margin:0}
 .foot-wrap{max-width:960px;margin:56px auto 0;padding:0 20px}
@@ -89,6 +98,13 @@ h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.1rem,6vw,3.4rem);l
 </section>
 
 <main>
+  <section class="wrap" id="today" aria-labelledby="g-today">
+    <div class="today-box">
+      <span class="today-label" id="g-today">Today</span>
+      <div class="today-stats" id="today-stats"></div>
+    </div>
+  </section>
+
   <section class="wrap" aria-labelledby="g-verbs">
     <h2 class="grp" id="g-verbs">Verbs</h2>
     <div class="grid">
@@ -152,6 +168,45 @@ h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.1rem,6vw,3.4rem);l
     <p>Built by Charmaine and Claude</p>
   </footer>
 </div>
+
+<script>
+(function () {
+  function todayStr() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  var data = {};
+  try { data = JSON.parse(localStorage.getItem("heb:daily")) || {}; } catch (e) {}
+  if (data.date !== todayStr()) data = {};
+  var hwg = data.hwg || 0;
+  var hbt = data.hbt || 0;
+  var total = hwg + hbt;
+
+  if (total === 0) {
+    document.getElementById("today").remove();
+    return;
+  }
+
+  var activities = [
+    { href: "https://cmainechan.github.io/hwg/", label: "Word builder", count: hwg, unit: hwg === 1 ? "flashcard" : "flashcards" },
+    { href: "https://cmainechan.github.io/hbt/", label: "Interlinear practice", count: hbt, unit: hbt === 1 ? "verse" : "verses" }
+  ];
+
+  var stats = document.getElementById("today-stats");
+  activities.forEach(function (a) {
+    if (a.count === 0) return;
+    var el = document.createElement("a");
+    el.className = "today-stat";
+    el.href = a.href;
+    el.target = "_blank";
+    el.rel = "noopener";
+    el.innerHTML = '<div class="today-num">' + a.count + '</div>' +
+      '<div class="today-unit">' + a.unit + '</div>' +
+      '<div class="today-sub">' + a.label + '</div>';
+    stats.appendChild(el);
+  });
+})();
+</script>
 
 </body>
 </html>
