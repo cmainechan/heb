@@ -180,12 +180,6 @@ h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.1rem,6vw,3.4rem);l
   if (data.date !== todayStr()) data = {};
   var hwg = data.hwg || 0;
   var hbt = data.hbt || 0;
-  var total = hwg + hbt;
-
-  if (total === 0) {
-    document.getElementById("today").remove();
-    return;
-  }
 
   var activities = [
     { href: "https://cmainechan.github.io/hwg/", label: "Word builder", count: hwg, unit: hwg === 1 ? "flashcard" : "flashcards" },
@@ -194,7 +188,6 @@ h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.1rem,6vw,3.4rem);l
 
   var stats = document.getElementById("today-stats");
   activities.forEach(function (a) {
-    if (a.count === 0) return;
     var el = document.createElement("a");
     el.className = "today-stat";
     el.href = a.href;
